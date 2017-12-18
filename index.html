@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>My First Game</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1>My First Game</h1>
+				<img src="img/screen_1.png" alt="game screen 1"><br/>
+				<a href="https://nox911.github.io/starGame/index.html" target="_blank">Game link -></a>
+			</section>
+			<section>
+				<h2>Some screenshoots:</h2>
+			</section>
+			<section>
+				<img src="img/screen_2.png" alt="game screen 2"><br/>
+			</section>
+			<section>
+				<img src="img/screen_3.png" alt="game screen 3"><br/>
+			</section>
+			<section>
+				<img src="img/screen_7.png" alt="game screen 7"><br/>
+			</section>
+			<section>
+				<h1>Konva</h1>
+			</section>
+			<section>
+				<h2>What’s Konva?</h2>
+				<div id="fragments">
+					<ul>
+						<li style="font-size:32px;" class="fragment">Konva is an HTML5 Canvas JavaScript framework that extends the 2d context
+							by enabling canvas interactivity for desktop and mobile applications.</li>
+						<li style="font-size:32px;" class="fragment">Konva enables high performance animations, transitions, node nesting, layering, filtering,
+							caching, event handling for desktop and mobile applications, and much more.</li>
+					</ul>
+				</div>
+			</section>
+			<section>
+				<h2>How does it work?</h2>
+				<p style="font-size:32px;">Every thing starts from Konva.Stage that contains several user’s layers (Konva.Layer).</p>
+						
+						<p style="font-size:32px;">Each layer has two 'canvas' renderers: a scene renderer and a hit graph renderer.
+						The scene renderer is what you can see, and the hit graph renderer is a special hidden
+						canvas that’s used for high performance event detection.</p>
+						
+						<p style="font-size:32px;">Each layer can contain shapes, groups of shapes, or groups of other groups.
+						The stage, layers, groups, and shapes are virtual nodes, similar to DOM nodes in an HTML page.</p>
+			</section>
+			<section>
+					<h2>Konva hierarchy:</h2>
+					<img src="img/konva_hierarchy.png" alt="Konva hierarchy">
+			</section>
+			<section>
+					<h3>Add Konva Stage and layer</h3>
+					<pre><code class="hljs" data-trim contenteditable>															   															
+							const stage = new Konva.Stage({ // create Stage of Konva
+								container: 'game', // id of container div
+								width: gameWidth,
+								height: gameHeight
+							});							
+							const layer = new Konva.Layer(); 	// create Layer of Konva
+						</code></pre>
+			</section>
+			<section>
+					<h3>Create Konva Sprite</h3>
+					<pre><code class="hljs" data-trim contenteditable>															   															
+							// create Hero sprite with Konva Sprite
+							const hero = new Konva.Sprite({
+								  x: 1700, // start position X
+								  y: 240, // start position Y   
+								  image: heroImg, // animations map source
+								  animation: 'idle', //start animation
+								  animations: animationsHero, // animations map
+								  frameRate: 6,  
+								  frameIndex: 0 //start frame
+							  });
+							layer.add(hero); // add hero to layer
+							stage.add(layer); // add layer to stage
+							hero.start();     // start hero animation
+						</code></pre>
+			</section>
+			<section>
+					<h3>Create animation map</h3>
+					<pre><code class="hljs" data-trim contenteditable>	
+
+							const heroImg = new Image(); // animations map source
+							heroImg.src = 'img/hero.png';
+
+							const animationsHero = {
+								idle: [ 
+									400, 0, 100, 100,
+									300, 0, 100, 100,
+									200, 0, 100, 100,
+									100, 0, 100, 100,
+									000, 0, 100, 100
+									...
+						</code></pre>
+			</section>
+			<section>
+				<img src="img/screen_5.png" alt="game screen 5"><br/>
+			</section>
+			<section>
+					<h3>Change Konva Sprite Attributes</h3>
+					<pre><code class="hljs" data-trim contenteditable>	
+
+							function handleInput() {
+								// hero action if has pressed DOWN or S button
+								if(input.isDown('DOWN') || input.isDown('s')) {
+									if (hero.attrs.y + 1 < gameHeight -185) { 
+										hero.setY(hero.attrs.y + heroSpeed);
+										if (hero.action!=='shieldActive') {
+											hero.attrs.animation = 'idle';
+										}
+									}
+								}
+									...
+						</code></pre>
+			</section>
+			<section>
+					<h3>Remove sprite from layer and stop animation</h3>
+					<pre><code class="hljs" data-trim contenteditable>	
+							function overlordDie() {
+								overlords.forEach(function(overlord,index) {
+                  if ((overlord.action==='die') &&
+                     (overlord.attrs.frameIndex>8)) {
+										overlord.stop();
+										overlord.remove();
+										overlords.splice(index,1);
+										score+=100;
+										updateDifficult();
+									}
+								});
+							}
+						</code></pre>
+			</section>
+			<section>
+					<h3>Create Konva Text</h3>
+					<pre><code class="hljs" data-trim contenteditable>															   															
+							let scoreText = new Konva.Text({ //create text
+								x: 730,
+								y: 618,
+								text: 'text',
+								fontSize:24,
+								fontStyle:'bold',
+								fontFamily:'Helvetica Neue',
+								align:'left',
+								stroke:'black',
+								fill:'orange',
+								width:'160'
+							});
+						</code></pre>
+			</section>
+			<section>
+				<img src="img/screen_6.png" alt="game screen 6"><br/>
+			</section>
+			<section>
+					<h3>Change Konva Text Attributes</h3>
+					<pre><code class="hljs" data-trim contenteditable>								
+							function showHeroParam () {  // displaying hero parametrs
+								...
+								scoreText.setAttr('text', 'Score: ' + score);
+								heroHealth.setAttr('text', Math.floor(dispHealth)+'%');
+								heroShield.setAttr('text', Math.floor(dispShield)+'%');
+								heroBulletsText.setAttr('text',heroBulletsCount);   
+							}
+							...
+						</code></pre>
+			</section>
+			<section>
+				<h3>Create Konva loop</h3>
+				<pre><code class="hljs" data-trim contenteditable>	
+		  // infinity game loop
+		  let gameLoop = new Konva.Animation(function() {
+			  handleInput();
+			  heroFaceDefault();
+			  ...
+			  heroDie();
+			  checkCollisions();
+			  showHeroParam ();
+			  soundtrackPlay();
+		  }, layer);							
+					...
+					</code></pre>
+  		</section>
+  		<section>
+				<h3>Stop Konva loop</h3>
+				<pre><code class="hljs" data-trim contenteditable>	
+		  //end game
+		  function gameOver() { 
+			  soundTrack.pause();
+			  gameOverTrack.play();
+			  gameLoop.stop();
+		  }
+					</code></pre>
+  </section>
+			<section>
+					<h3>Collisions between objects</h3>
+					<pre><code class="hljs" data-trim contenteditable>								
+							// collidies between two shape
+							function collides(x, y, r, b, x2, y2, r2, b2) {
+								return !(r <= x2 || x > r2 ||
+										 b <= y2 || y > b2);
+							}							 
+							// collidies between two rectangle
+							function boxCollides(pos, size, pos2, size2) {  
+								return collides(pos[0], pos[1],
+								pos[0] + size[0], pos[1] + size[1],
+								pos2[0], pos2[1],
+								pos2[0] + size2[0], pos2[1] + size2[1]);
+							}
+						</code></pre>
+			</section>
+			<section>
+				<img src="img/screen_7.png" alt="game screen 7"><br/>
+			</section>
+			<section>
+				<img src="img/screen_9.png" alt="game screen 9"><br/>
+			</section>
+			<section>
+					<h3>Collisions between objects</h3>
+					<pre><code class="hljs" data-trim contenteditable>								
+							heroBullets.forEach(function (bullet,index) {
+								enemiesSomePosition=0;
+								heroBulletPos = [bullet.attrs.x, bullet.attrs.y];
+								...
+								overlords.forEach(function(overlord,number) {
+									overlordPos = [overlord.attrs.x,overlord.attrs.y];
+									if (overlord.action != 'die') {
+                    if (boxCollides(overlordPos,
+                                    overlordSize,
+                                    heroBulletPos,
+                                    heroBulletSize)) {
+                        ...
+						</code></pre>
+      </section>
+      <section>
+					<h3>Create Konva event</h3>
+					<pre><code class="hljs" data-trim contenteditable>	
+              // pause button
+              pauseText.on('mouseenter', function () {
+                  this.setFill('#ce0b0b');
+                  stage.container().style.cursor = 'pointer';
+              });
+              pauseText.on('mouseleave', function () {
+                  this.setFill('green');
+                  stage.container().style.cursor = 'default';
+              });
+              pauseText.on('click', function() {
+                  pauseGame();
+              });
+						</code></pre>
+			</section>
+			<section>
+        <h3>Result:</h3>
+        <img src="img/screen_8.png" width:1000 height:700 alt="game screen" style="margin-top:-30px;">
+			</section>
+      <section>
+				<h1>Thank you!</h1>
+			</section>
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+										// More info about config & dependencies:
+										// - https://github.com/hakimel/reveal.js#configuration
+										// - https://github.com/hakimel/reveal.js#dependencies
+										Reveal.initialize({
+											dependencies: [
+												{ src: 'plugin/markdown/marked.js' },
+												{ src: 'plugin/markdown/markdown.js' },
+												{ src: 'plugin/notes/notes.js', async: true },
+												{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+											]
+										});
+	</script>
+</body>
+
+</html>
